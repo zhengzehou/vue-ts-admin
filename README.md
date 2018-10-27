@@ -27,5 +27,6 @@ git add 文件夹/
 git add "*.js"
 git add fileName1 fileName2
 git commit -m "first commit"
+git commit --amend 撤销 commit
 git remote add origin https://github.com/zhengzehou/vue-ts-admin.git
 git push -u origin master
