@@ -3,13 +3,8 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-let WebpackZipPlugin = require('webpack-zip-plugin')
+const FileManagerPlugin = require('filemanager-webpack-plugin')
 
-new WebpackZipPlugin({
-  initialFile: './dist', //需要打包的文件夹(一般为dist)
-  endPath: './', //打包到对应目录（一般为当前目录'./'）
-  zipName: 'operation.zip' //打包生成的文件名
-})
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -26,6 +21,14 @@ const createLintingRule = () => ({
 })
 
 module.exports = {
+  plugins: [
+    new FileManagerPlugin({
+      onEnd: {
+        mkdir: ['./zip'],
+        archive: [{ source: './dist', destination: './zip/test.zip' }]
+      }
+    })
+  ],
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.ts'
