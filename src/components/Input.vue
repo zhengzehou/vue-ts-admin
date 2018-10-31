@@ -1,5 +1,6 @@
 <template>
   <div class="form-item-content" @mouseenter="hovering = true" @mouseleave="hovering = false" :class="[
+    size ? 'input--'+size : '',
     { 'input--prefix': $slots.prefix || prefixIcon,
       'input--suffix': $slots.suffix || suffixIcon || clearable}]">
     <div class="input-wrapper" v-if="type !== 'textarea'">

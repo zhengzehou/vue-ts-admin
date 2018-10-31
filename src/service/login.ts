@@ -41,3 +41,7 @@ export function testHeaders() {
   // })
   return fetch({ url: '/user', method: 'get' })
 }
+
+export function qrLogin() {
+  return fetch({ url: '/qrLogin', method: 'get' })
+}

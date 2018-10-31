@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Dashboard from '@/views/Dashboard.vue'
 import Main from '@/containers/Main.vue'
+import Login from '@/containers/Login.vue'
+import Scan from '@/containers/Scan.vue'
+import FileUpload from '@/containers/FileUpload.vue'
 
 Vue.use(Router)
 /* login */
@@ -11,7 +14,9 @@ function getComponent(file: string) {
   return () => import('@/' + file)
 }
 export const constantRouterMap = [
-  { path: '/login', component: Main, hidden: true },
+  { path: '/login', component: Login, hidden: true },
+  { path: '/scan', component: Scan, hidden: true },
+  { path: '/file', component: FileUpload, hidden: true },
   {
     path: '/',
     redirect: '/dashboard',

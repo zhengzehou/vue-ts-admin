@@ -15,4 +15,9 @@ const produceData = function(opt: any) {
   return articles
 }
 
+const qrLogin = function(opt: any) {
+  return 'http://opc.beta.ule.com/ruralOpcAdmin/login.do'
+}
+
 Mock.mock('/user', /post|get/i, produceData)
+Mock.mock('/qrLogin', /post|get/i, qrLogin)
