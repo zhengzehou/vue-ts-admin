@@ -53,13 +53,6 @@ export default class HeaderSimple extends Vue {
 </script>
 
 <style type="text/css" scoped>
-@font-face {
-  font-family: Ionicons;
-  src: url(/static/fonts/icomoon.ttf) format('truetype'),
-    url(/static/fonts/icomoon.svg) format('svg');
-  font-weight: 400;
-  font-style: normal;
-}
 a {
   color: #2d8cf0;
   background: 0 0;

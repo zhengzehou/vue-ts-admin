@@ -1,6 +1,54 @@
 import fetch from '../utils/fetch'
 import '../mock/mock'
 
+export function loginByUsername(name: string, password: string) {
+  const data = { name, password }
+  return fetch({
+    url: '/login/loginbyname',
+    method: 'post',
+    data
+  })
+}
+export function clearCookieToken() {
+  var userName = encodeURI('userName')
+  var key: any = localStorage.getItem(userName)
+  localStorage.setItem(userName, '')
+  localStorage.setItem(key, '')
+}
+export function setCookieToken(userName: string, token: string) {
+  userName = compileStr(userName)
+  token = compileStr(token)
+  localStorage.setItem(encodeURI('userName'), userName)
+  localStorage.setItem(userName, token)
+}
+export function getCookieToken() {
+  var userName = encodeURI('userName')
+  var key: any = localStorage.getItem(userName)
+  let tokenStr: any = localStorage.getItem(key)
+  return tokenStr ? uncompileStr(tokenStr) : ''
+}
+export function getCookieUserName() {
+  var userName = encodeURI('userName')
+  var key: any = localStorage.getItem(userName)
+  return key
+}
+function compileStr(code: string) {
+  //对字符串进行加密
+  var c = String.fromCharCode(code.charCodeAt(0) + code.length)
+  for (var i = 1; i < code.length; i++) {
+    c += String.fromCharCode(code.charCodeAt(i) + code.charCodeAt(i - 1))
+  }
+  return escape(c)
+}
+//字符串进行解密
+function uncompileStr(code: string) {
+  code = unescape(code)
+  var c = String.fromCharCode(code.charCodeAt(0) - code.length)
+  for (var i = 1; i < code.length; i++) {
+    c += String.fromCharCode(code.charCodeAt(i) - c.charCodeAt(i - 1))
+  }
+  return c
+}
 export function loginByEmail(email: string, password: string) {
   const data = {
     email,
@@ -13,10 +61,11 @@ export function loginByEmail(email: string, password: string) {
   })
 }
 
-export function logout() {
+export function logout(username: string) {
   return fetch({
     url: '/login/logout',
-    method: 'post'
+    method: 'post',
+    data: { username }
   })
 }
 

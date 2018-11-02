@@ -257,6 +257,7 @@
 <script lang = "ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+// import Position from '@/components/Position.vue'
 
 // import DashChartCount from './charts/DashChartCount';
 // import DashChartVisitor from './charts/DashChartVisitor';
@@ -265,6 +266,7 @@ import Component from 'vue-class-component'
 // import TodoList from '@/components/TodoList'
 @Component({
   // components: { DashChartCount, DashChartVisitor, DashChartLarge, VueCalendar, TodoList },
+  components: {}
 })
 export default class Dashboard extends Vue {
   value1: number = 0

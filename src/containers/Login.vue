@@ -23,7 +23,7 @@
                   <Input prefix-icon="icon-locked" size="large" type="password" placeholder="请输入密码" v-model="password" />
                 </div>
                 <div class="el-form-item ">
-                  <Button class="ivu-btn-error" style="width:100%;" size="large">登 录</Button>
+                  <Button class="ivu-btn-error" style="width:100%;" @click.prevent="login" size="large">登 录</Button>
                 </div>
                 <div class="el-form-item ">
                   <a style="float: right; padding: 3px 0" class="ivu-btn-text">忘记密码</a>
@@ -63,7 +63,7 @@ import QRCode from '../components/LoginQRCode.vue'
 import Component from 'vue-class-component'
 import Vue from 'vue'
 
-import { qrLogin } from '@/service/login'
+import { qrLogin, loginByUsername, setCookieToken } from '@/service/login'
 import { setTimeout, setInterval } from 'timers'
 
 @Component({
@@ -80,7 +80,7 @@ export default class Login extends Vue {
   showQrcodeFlg = false
   qrcodeCanotUseFlg = false
   counter = 30
-  qrcodeVal = '1111111111111111111'
+  qrcodeVal = ''
   userName = ''
   password = ''
   getQrcode() {
@@ -91,6 +91,25 @@ export default class Login extends Vue {
   }
   refreshQrcode() {
     this.qrLogin()
+  }
+  login() {
+    let that = this
+    loginByUsername(this.userName, this.password)
+      .then(_ => {
+        var token = _.data.token
+        setCookieToken(this.userName, token)
+        that.$store.state.user.name = that.userName
+        that.$store.state.user.token = token
+        // store.state.user.roles
+        // store.state.user.name
+        // store.state.user.email
+        // store.state.permission.siderbar_routers
+        let redirect = decodeURIComponent(this.$route.query.redirect || '/')
+        that.$router.push({ path: redirect })
+      })
+      .catch(_ => {
+        console.log('catch>>>>>>>>', _)
+      })
   }
   qrLogin() {
     this.counter = 30
@@ -125,178 +144,8 @@ export default class Login extends Vue {
 }
 </script>
 <style>
-.input--large {
-  font-size: 18px;
-}
-.ivu-btn-large {
-  padding: 7px 15px 9px;
-  font-size: 16px;
-  border-radius: 4px;
-  font-weight: 900;
-}
-.input--large .input-inner {
-  height: 48px;
-  line-height: 48px;
-  font-size: 16px;
-  padding-left: 40px;
-}
-.input--large .input-prefix {
-  font-size: 30px;
-  margin-left: 10px;
-  top: 5px;
-}
-.page-login {
-  background-image: url(../../static/img/oa_bg.png);
-  background-repeat: no-repeat;
-}
-.el-form {
-  padding: 10px;
-}
 .el-form-item {
   margin-bottom: 32px;
-}
-.login_card {
-  width: 420px;
-  float: right;
-  margin-right: 15%;
-  margin-top: 50px;
-}
-.login_user_way {
-  float: right;
-  position: relative;
-  left: 12px;
-  top: -12px;
-  width: 64px;
-  height: 64px;
-  cursor: pointer;
-  background-repeat: no-repeat;
-  background-image: url(../../static/img/login_b.png);
-  background-position: -96px -406px;
-}
-.login_qrcode {
-  float: right;
-  position: relative;
-  left: 12px;
-  top: -12px;
-  width: 64px;
-  height: 64px;
-  cursor: pointer;
-  background-repeat: no-repeat;
-  background-image: url(../../static/img/login_b.png);
-  background-position: -96px -339px;
-}
-.login_qrcode_img {
-  background-image: url(../../static/img/login_b.png);
-  background-position: -115px -473px;
-  float: left;
-  position: relative;
-  left: 40px;
-  top: 20px;
-  width: 45px;
-  height: 45px;
-  cursor: default;
-  background-repeat: no-repeat;
-}
-.qrcode {
-  margin-left: 88px;
-  width: 200px;
-  height: 170px;
-}
-.qrcode_login_msg_err {
-  width: 200px;
-  height: 180px;
-  background: rgba(255, 255, 255, 0.95);
-  position: relative;
-  margin-top: -180px;
-  margin-left: 88px;
-  z-index: 9999;
-}
-.qrcode_login_msg_err h6 {
-  color: #3c3c3c;
-  padding-top: 62px;
-  margin-bottom: 8px;
-  cursor: default;
-  text-align: center;
-  font-weight: 700;
-  font-size: 14px;
-}
-.qrcode_login_msg_err .refresh {
-  width: 100px;
-  height: 36px;
-  line-height: 36px;
-  text-align: center;
-  margin: 0 auto;
-  background: #f40;
-  display: block;
-  color: #fff;
-  border-radius: 3px;
-}
-.comm_cursor_default {
-  cursor: default !important;
-}
-.login_qrcode_img_font {
-  float: left;
-  position: relative;
-  font-size: 16px;
-  left: 50px;
-  top: 32px;
-}
-.login_login_title {
-  display: inline-block;
-}
-.passwordLogin_true {
-  font-size: 20px;
-  padding-bottom: 5px;
-  font-weight: 700;
-  padding-left: 10px;
-  /* border-bottom: 2px solid red;
-  color: red; */
-}
-.icon-user:before {
-  color: #59ce81;
-  content: '\f3a0';
-}
-.icon-locked:before {
-  color: #59ce81;
-  content: '\f458';
-}
-@media screen and (max-width: 800px) and (min-width: 650px) {
-  /*当屏幕尺寸小于600px时，应用下面的CSS样式*/
-  .login_card {
-    margin-right: 10px;
-    margin-left: 10px;
-    margin-top: 50px;
-  }
-  .qrcode_login_msg_err {
-    margin-left: auto;
-    margin: 0 auto;
-    margin-top: -180px;
-  }
-  body {
-    min-width: 580px;
-    overflow-x: scroll;
-  }
-}
-
-@media screen and (max-width: 649px) {
-  .login_card {
-    width: 100%;
-    float: right;
-    margin-right: 0px;
-    margin-top: 50px;
-  }
-  .qrcode {
-    margin-left: auto;
-    margin: 0 auto;
-  }
-  .qrcode_login_msg_err {
-    margin-left: auto;
-    margin: 0 auto;
-    margin-top: -180px;
-  }
-  body {
-    width: 100%;
-  }
 }
 </style>
 

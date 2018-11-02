@@ -1,6 +1,7 @@
 // import { loginByEmail, logout, getInfo } from 'api/login'
 import Cookies from 'js-cookie'
 import { Commit } from 'vuex'
+import { logout, getCookieUserName, clearCookieToken } from '@/service/login'
 
 export interface UserState {
   user: string
@@ -140,13 +141,13 @@ const user = {
     // 登出
     LogOut(context: { commit: Commit; state: UserState }) {
       return new Promise((resolve, reject) => {
-        // logout(state.token)
-        //   .then(() => {
-        context.commit('SET_TOKEN', '')
-        context.commit('SET_ROLES', [])
-        Cookies.remove('Admin-Token')
-        resolve()
-        // })
+        logout(getCookieUserName()).then(() => {
+          clearCookieToken()
+          // context.commit('SET_TOKEN', '')
+          // context.commit('SET_ROLES', [])
+          // Cookies.remove('Admin-Token')
+          resolve()
+        })
         // .catch(error => {
         //   reject(error)
         // })

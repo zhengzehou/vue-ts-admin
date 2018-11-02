@@ -15,7 +15,6 @@ function getComponent(file: string) {
 }
 export const constantRouterMap = [
   { path: '/login', component: Login, hidden: true },
-  { path: '/scan', component: Scan, hidden: true },
   { path: '/file', component: FileUpload, hidden: true },
   {
     path: '/',
@@ -29,6 +28,7 @@ export const constantRouterMap = [
         name: '组件',
         component: {
           render(c: any) {
+            // { path: '/scan', component: Scan, hidden: true },
             return c('router-view')
           }
         },
@@ -54,6 +54,24 @@ export const constantRouterMap = [
             component: getComponent('views/components/Forms.vue')
           }
         ]
+      },
+      {
+        path: '/scan',
+        name: '二维码扫描',
+        icon: 'merge',
+        component: getComponent('views/components/Scan.vue')
+      },
+      {
+        path: '/pos',
+        name: '地理位置',
+        icon: 'merge',
+        component: getComponent('components/Position.vue')
+      },
+      {
+        path: '/camera',
+        name: '相机',
+        icon: 'merge',
+        component: getComponent('components/Camera.vue')
       }
     ]
   }
@@ -196,6 +214,21 @@ export const asyncRouterMap = [
         meta: { role: ['admin'] }
       },
       { path: '/jsontree', name: 'JSON视图', icon: 'merge' },
+      {
+        path: '/scan',
+        name: '二维码扫描',
+        icon: 'merge'
+      },
+      {
+        path: '/pos',
+        name: '地理位置',
+        icon: 'merge'
+      },
+      {
+        path: '/camera',
+        name: '相机',
+        icon: 'merge'
+      },
       { path: '/tabledetail/:id', name: 'TableDetail', hidden: true },
       { path: '/tinymce', name: 'Tinymce编辑器', icon: 'android-document' },
       { path: '/markdown', name: 'Markdown', icon: 'android-list' }

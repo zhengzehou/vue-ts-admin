@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <div id="support"></div>
-        <div id="contentHolder">
-            <video id="video" width="320" height="320" autoplay>
-            </video>
-            <canvas style="display:none; background-color:#F00;" id="canvas" width="320" height="320">
-            </canvas> <br />
-            <button id="snap" @click="startPat" style="display:none; height:50px; width:120px;">开始扫描</button>
-        </div>
+  <div>
+    <div id="support"></div>
+    <div id="contentHolder">
+      <video id="video" width="320" height="320" autoplay>
+      </video>
+      <canvas style="display:none; background-color:#F00;" id="canvas" width="320" height="320">
+      </canvas> <br />
+      <button id="snap" @click="startPat" style="display:none; height:50px; width:120px;">开始扫描</button>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -26,7 +26,7 @@ import Component from 'vue-class-component'
 import Vue from 'vue'
 
 @Component
-export default class VueScan extends Vue {
+export default class QRScan extends Vue {
   // codeUrl = ''
   // isShow = true
   // 这段代 主要是获取摄像头的视频流并显示在Video 签中
