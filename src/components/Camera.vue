@@ -1,491 +1,441 @@
 <template>
-  <div class="animated fadeIn">
-    <header id="header">
-      <div class="nvbt iback" onclick="back()"></div>
-      <div class="nvtt">Camera</div>
-      <div class="nvbt idoc" onclick="openDoc('Camera Document','/doc/camera.html')"></div>
-    </header>
-    <div id="dcontent" class="dcontent">
-      <!--<div class="button" onclick="changeIndex();">
-				选择：<span id="display" style="color:#FF0000">主摄像头</span>
-				<div style="width:0px;height:0px;overflow:hidden;"><select id="index">
-					<option value='1' selected="true">主摄像头</option>
-					<option value='2' >辅摄像头</option>
-				</select></div>
-			</div>-->
-      <div class="button" @click="getImage()">拍照</div>
-      <div class="button" @click="getVideo()">录像</div>
-      <br />
-      <!-- History list -->
-      <ul id="history" class="dlist" style="text-align:left;">
-        <li id="empty" class="ditem-empty">无历史记录</li>
-      </ul>
-      <br />
-      <div class="button button-waring" @click="cleanHistory()">清空历史记录</div>
-      <br />
-    </div>
-    <div id="output">
-      Camera管理摄像头设备，可用于拍摄照片、录制视频文件。
+  <div>
+    <div class="camera-photo" ref="divGenres" v-show="isPhoto" @click="choiceImg">
+      <img style="width:300px;height:300px;" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1528077222&di=69a2ffcffd12e35216ab71da7a610abe&src=http://img.zcool.cn/community/01f15555b4df7e6ac725ca50c172a1.png@2o.png" />
+      <br>
+      <span>请选择图片上传</span>
+      <input type="file" ref="uploadImage" @change="onFileChange" accept="image/*" capture="camera" style="display: none;">
     </div>
 
+    <div class="list-li" v-show="show">
+      <div style="display: inline-block;">
+        <a class="list-link" @click='previewImage(imgsrc)'>
+          <img :src="imgsrc">
+        </a>
+        <span class="list-img-close" @click='delImage'></span>
+      </div>
+      <div class="add-preview" v-show="isPreview" @click="closePreview">
+        <img :src="previewImg">
+      </div>
+      <button type="button" class="upload-button" @click="upload">图片上传</button>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import clickoutside from '@/directives/CustomDirectives'
-let win: any = window
-let plus: any = win.plus
+<script>  
+export default {
+  data () {
+    return {
+      imgsrc: '',//上传的·图片的地址
+      show: false,//图片放大预览
+      previewImg: '',//预览图片的地址
+      isPreview: false,//是否预览当前图片
+      isPhoto: true,
+      uploadFile: null
+    }
+  },
+  methods: {
 
-var i = 1,
-  gentry: any = null,
-  w: any = null
-var hl: any = null,
-  le: any = null,
-  de: any = null,
-  ie: any = null
-var unv = true
-var bUpdated = false //用于兼容可能提前注入导致DOM未解析完更新的问题
-
-@Component
-export default class Camera extends Vue {
-  codeUrl = ''
-  changeIndex() {
-    console.log('选择摄像头：')
-    ie.focus()
-  }
-  indexChanged() {
-    de.innerText = ie.options[ie.selectedIndex].innerText
-    i = parseInt(ie.value)
-    console.log(de.innerText)
-  }
-  // 拍照
-  getImage() {
-    let that = this
-    console.log('开始拍照：')
-    var cmr = plus.camera.getCamera()
-    cmr.captureImage(
-      function(p: any) {
-        console.log('成功：' + p)
-        plus.io.resolveLocalFileSystemURL(
-          p,
-          function(entry: any) {
-            that.createItem(entry)
-          },
-          function(e: any) {
-            console.log('读取拍照文件错误：' + e.message)
-          }
-        )
-      },
-      function(e: any) {
-        console.log('失败：' + e.message)
-      },
-      { filename: '_doc/camera/', index: 1 }
-    )
-  }
-  // 录像
-  getVideo() {
-    let that = this
-    console.log('开始录像：')
-    var cmr = plus.camera.getCamera()
-    cmr.startVideoCapture(
-      function(p: any) {
-        console.log('成功：' + p)
-        plus.io.resolveLocalFileSystemURL(
-          p,
-          function(entry: any) {
-            that.createItem(entry)
-          },
-          function(e: any) {
-            console.log('读取录像文件错误：' + e.message)
-          }
-        )
-      },
-      function(e: any) {
-        console.log('失败：' + e.message)
-      },
-      { filename: '_doc/camera/', index: i }
-    )
-  }
-  // 显示文件
-  displayFile(li: any) {
-    if (w) {
-      console.log('重复点击！')
-      return
-    }
-    if (!li || !li.entry) {
-      console.log('无效的媒体文件')
-      return
-    }
-    var name = li.entry.name
-    var suffix = name.substr(name.lastIndexOf('.'))
-    var url = ''
-    if (
-      suffix == '.mov' ||
-      suffix == '.3gp' ||
-      suffix == '.mp4' ||
-      suffix == '.avi'
-    ) {
-      //if(unv){plus.runtime.openFile('_doc/camera/'+name);return;}
-      url = '/plus/camera_video.html'
-    } else {
-      url = '/plus/camera_image.html'
-    }
-    w = plus.webview.create(url, url, {
-      hardwareAccelerated: true,
-      scrollIndicator: 'none',
-      scalable: true,
-      bounce: 'all'
-    })
-    w.addEventListener(
-      'loaded',
-      function() {
-        w.evalJS('loadMedia("' + li.entry.toLocalURL() + '")')
-        //w.evalJS('loadMedia("'+'http://localhost:13131/_doc/camera/'+name+'")');
-      },
-      false
-    )
-    w.addEventListener(
-      'close',
-      function() {
-        w = null
-      },
-      false
-    )
-    w.show('pop-in')
-  }
-
-  // 添加播放项
-  createItem(entry: any) {
-    var li: any = document.createElement('li')
-    li.className = 'ditem'
-    li.innerHTML =
-      '<span class="iplay"><font class="aname"></font><br/><font class="ainf"></font></span>'
-    li.setAttribute('onclick', 'displayFile(this)')
-    hl.insertBefore(li, le.nextSibling)
-    li.querySelector('.aname').innerText = entry.name
-    li.querySelector('.ainf').innerText = '...'
-    li.entry = entry
-    this.updateInformation(li)
-    // 设置空项不可见
-    le.style.display = 'none'
-  }
-  // 获取录音文件信息
-  updateInformation(li: any) {
-    if (!li || !li.entry) {
-      return
-    }
-    var entry = li.entry
-    entry.getMetadata(
-      function(metadata: any) {
-        li.querySelector('.ainf').innerText = metadata.modificationTime
-      },
-      function(e: any) {
-        console.log('获取文件"' + entry.name + '"信息失败：' + e.message)
+    choiceImg () {
+      let self = this;
+      if (!window.plus) {
+        self.addPic()//如果不支持plus,就用本地相册上传即可
+        return;
       }
-    )
-  }
-  // 获取录音历史列表
-  updateHistory() {
-    if (bUpdated || !gentry || !document.body) {
-      //兼容可能提前注入导致DOM未解析完更新的问题
-      return
-    }
-    var reader = gentry.createReader()
-    let that = this
-    reader.readEntries(
-      function(entries: any) {
-        for (var i in entries) {
-          if (entries[i].isFile) {
-            that.createItem(entries[i])
+
+      let title = "选择照片"
+      let btns = ['拍照', '相册']
+
+      var func = function (e) {
+        var index = e.index;
+        if (index == 1) self.choiceCamera();
+        if (index == 2) self.choicePic();
+      }
+      if (title && btns && btns.length > 0) {
+        var btnArray = [];
+        for (var i = 0; i < btns.length; i++) {
+          btnArray.push({ title: btns[i] });
+        }
+
+        plus.nativeUI.actionSheet({
+          title: title,
+          cancel: '取消',
+          buttons: btnArray
+        }, function (e) {
+          if (func) func(e);
+        });
+      }
+    },
+
+    choiceCamera () {
+      let self = this;
+      var cmr = plus.camera.getCamera();
+      cmr.captureImage(function (path) {
+
+        plus.io.resolveLocalFileSystemURL(path, function (entry) {
+          // self.imgsrc = entry.toLocalURL();
+          self.resetImg(entry.toLocalURL())
+          // self.show = true;
+
+        }, function (e) { plus.nativeUI.toast("读取拍照文件错误：" + e.message); });
+      }, function (e) { }, { index: 1, filename: "_doc/camera/" });
+    },
+
+    choicePic () {
+      let self = this;
+      plus.gallery.pick(function (p) {
+        plus.io.resolveLocalFileSystemURL(p, function (entry) {
+          // self.imgsrc = entry.toLocalURL();
+          self.resetImg(entry.toLocalURL())
+          // self.show = true;
+        }, function (e) {
+          plus.nativeUI.toast("读取拍照文件错误：" + e.message);
+        });
+      }, function (e) { plus.nativeUI.toast("读取拍照文件错误：" + e.message); }, {
+          filename: "_doc/camera/",
+          filter: "image"
+        });
+    },
+    resetImg (imgsrc) {
+      var self = this
+      var img = new Image,
+        canvas = document.createElement("canvas"),
+        ctx = canvas.getContext("2d");
+      img.src = imgsrc ? imgsrc : self.imgsrc;
+      let initSize = img.src.length
+      let width = img.width
+      let height = img.height
+      // 如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+      let ratio = 1
+      canvas.width = width
+      canvas.height = height
+      // 铺底色
+      ctx.fillStyle = '#fff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(img, 0, 0, width, height)
+      img.onload = function () {
+        let data = self.compress(img, 6)
+        self.imgsrc = data
+        self.show = true
+      }
+    },
+    upload () {
+      debugger
+      var self = this
+      var wt;
+      if (window.plus)
+        wt = plus.nativeUI.showWaiting();
+      console.log('upload start')
+      var img = new Image,
+        width = 512, //image resize   压缩后的宽
+        quality = 0.5, //image quality  压缩质量
+        canvas = document.createElement("canvas"),
+        drawer = canvas.getContext("2d");
+      img.src = self.imgsrc;
+      console.log('upload start  onload')
+      img.onload = function () {//利用canvas压缩图片
+        canvas.width = width;
+        canvas.height = width * (img.height / img.width);
+        drawer.drawImage(img, 0, 0, canvas.width, canvas.height);
+        debugger
+        var base64 = canvas.toDataURL("image/*", quality);
+        var pic = base64.split(',')[1];//图片的base64编码内容
+        var f = self.imgsrc;
+        var filename = f.replace(f.substring(0, f.lastIndexOf('/') + 1), '');//图片名称
+        console.log('upload start  ' + filename)
+        console.log('upload start  f=' + f)
+        if (self.uploadFile !== null) {//addPic方法得到的图片文件
+          filename = self.uploadFile.name
+          let reader = new FileReader();
+          reader.readAsDataURL(self.uploadFile);
+          reader.onload = function (e) {
+            img.src = e.target.result;
+          }
+          console.log('upload start  img.src=' + img.src)
+          img.onload = function () {
+            canvas.width = width;
+            canvas.height = width * (img.height / img.width);
+            drawer.drawImage(img, 0, 0, canvas.width, canvas.height);
+            base64 = canvas.toDataURL("image/*", quality);
+            pic = base64.split(',')[1];
+            console.log('base64=' + base64)
+            console.log('pic=' + pic)
+            if (window.plus)
+              wt = plus.nativeUI.closeWaiting();
           }
         }
-      },
-      function(e: any) {
-        console.log('读取录音列表失败：' + e.message)
+        //此处是将图片上传到服务器的代码，略过
       }
-    )
-    bUpdated = true
-  }
-  // 清除历史记录
-  cleanHistory() {
-    hl.innerHTML = '<li id="empty" class="ditem-empty">无历史记录</li>'
-    le = document.getElementById('empty')
-    // 删除音频文件
-    console.log('清空拍照录像历史记录：')
-    gentry.removeRecursively(
-      function() {
-        // Success
-        console.log('成功！')
-      },
-      function(e: any) {
-        console.log('失败：' + e.message)
-      }
-    )
-  }
+    },
 
-  mounted() {
-    this.$nextTick(() => {})
-  }
-  plusReady() {
-    // 获取摄像头目录对象
-    plus.io.resolveLocalFileSystemURL(
-      '_doc/',
-      function(entry: any) {
-        entry.getDirectory(
-          'camera',
-          { create: true },
-          function(dir: any) {
-            gentry = dir
-            // updateHistory()
-          },
-          function(e: any) {
-            console.log('Get directory "camera" failed: ' + e.message)
+    onFileChange (e) {
+      let self = this;
+      let files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      let file = files[0];//File对象
+      self.uploadFile = file;
+      console.log('onFileChange', file)
+      let Orientation = 8;
+      console.log('onFileChange>Orientation', Orientation)
+      let reader = new FileReader();//FileReader对象
+      reader.readAsDataURL(file);//该方法会读取指定的 Blob 或 File 对象。读取操作完成的时候，readyState 会变成已完成（DONE），并触发 loadend 事件，同时 result 属性将包含一个data:URL格式的字符串（base64编码）以表示所读取文件的内容。
+
+      //  reader.onload = function (e) {
+      //   self.imgsrc = e.target.result;//图片内容的base64编码
+      //   self.show = true;
+      // } 
+
+      // 读取成功后的回调
+      reader.onloadend = function (e) {
+        let result = e.target.result;
+        let img = new Image()
+        img.src = result
+        // self.imgsrc = result
+        self.show = true;
+        //判断图片是否大于100K,是就直接上传，反之压缩图片
+        if (result.length <= 100 * 1024) {
+          console.log('onFileChange>onloadend')
+          self.imgsrc = result
+          // self.upload(result)
+        } else {
+          img.onload = function () {
+            let data = self.compress(img, 1)
+            self.imgsrc = result
           }
-        )
-      },
-      function(e: any) {
-        console.log('Resolve "_doc/" failed: ' + e.message)
-      }
-    )
-  }
-  created() {
-    let that = this
-    if (win.plus) {
-      this.plusReady()
-    } else {
-      document.addEventListener('plusready', this.plusReady, false)
-    }
-    // 监听DOMContentLoaded事件
-    document.addEventListener(
-      'DOMContentLoaded',
-      function() {
-        // 获取DOM元素对象
-        hl = document.getElementById('history')
-        le = document.getElementById('empty')
-        de = document.getElementById('display')
-        if ((ie = document.getElementById('index'))) {
-          ie.onchange = that.indexChanged()
         }
-        // 判断是否支持video标签
-        unv = !document.createElement('video').canPlayType
-        // updateHistory()
-      },
-      false
-    )
-  }
+      }
+
+    },
+    addPic: function (e) {
+      let els = this.$refs.divGenres.querySelectorAll('input[type=file]')
+      els[0].click()
+      return false
+    },
+
+    delImage: function () {
+      this.imgsrc = "";
+      this.show = false;
+      this.isPreview = false;
+    },
+
+    previewImage: function (url) {
+      let vm = this;
+      vm.isPreview = true;
+      vm.previewImg = url;
+    },
+
+    closePreview: function () {
+      let vm = this;
+      vm.isPreview = false;
+      vm.previewImg = "";
+    },
+    compress (img, Orientation) {
+      let canvas = document.createElement('canvas')
+      let ctx = canvas.getContext('2d')
+      //瓦片canvas
+      let tCanvas = document.createElement('canvas')
+      let tctx = tCanvas.getContext('2d')
+      let initSize = img.src.length
+      let width = img.width
+      let height = img.height
+      //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+      let ratio
+      if ((ratio = (width * height) / 4000000) > 1) {
+        console.log('大于400万像素')
+        ratio = Math.sqrt(ratio)
+        width /= ratio
+        height /= ratio
+      } else {
+        ratio = 1
+      }
+      canvas.width = width
+      canvas.height = height
+      //    铺底色
+      ctx.fillStyle = '#fff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      //如果图片像素大于100万则使用瓦片绘制
+      let count
+      if ((count = (width * height) / 1000000) > 1) {
+        console.log('超过100W像素')
+        count = ~~(Math.sqrt(count) + 1) //计算要分成多少块瓦片
+        //      计算每块瓦片的宽和高
+        let nw = ~~(width / count)
+        let nh = ~~(height / count)
+        tCanvas.width = nw
+        tCanvas.height = nh
+        for (let i = 0; i < count; i++) {
+          for (let j = 0; j < count; j++) {
+            ctx.drawImage(
+              img,
+              i * nw * ratio,
+              j * nh * ratio,
+              nw * ratio,
+              nh * ratio,
+              0,
+              0,
+              nw,
+              nh
+            )
+            ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh)
+          }
+        }
+      } else {
+        ctx.drawImage(img, 0, 0, width, height)
+      }
+      //修复ios上传图片的时候 被旋转的问题
+      if (Orientation != '' && Orientation != 1) {
+        switch (Orientation) {
+          case 6: //需要顺时针（向左）90度旋转
+            this.rotateImg(img, 'left', canvas)
+            break
+          case 8: //需要逆时针（向右）90度旋转
+            this.rotateImg(img, 'right', canvas)
+            break
+          case 3: //需要180度旋转
+            this.rotateImg(img, 'right', canvas) //转两次
+            this.rotateImg(img, 'right', canvas)
+            break
+        }
+      }
+      //进行最小压缩
+      let ndata = canvas.toDataURL('image/jpeg', 0.1)
+      console.log('压缩前：' + initSize)
+      console.log('压缩后：' + ndata.length)
+      console.log(
+        '压缩率：' + ~~((100 * (initSize - ndata.length)) / initSize) + '%'
+      )
+      tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0
+      return ndata
+    },
+    rotateImg (img, direction, canvas) {
+      //最小与最大旋转方向，图片旋转4次后回到原方向
+      debugger
+      const min_step = 0
+      const max_step = 3
+      if (img == null) return
+      //img的高度和宽度不能在img元素隐藏后获取，否则会出错
+      let height = img.height
+      let width = img.width
+      let step = 2
+      if (step == null) {
+        step = min_step
+      }
+      if (direction == 'right') {
+        step++
+        //旋转到原位置，即超过最大值
+        step > max_step && (step = min_step)
+      } else {
+        step--
+        step < min_step && (step = max_step)
+      }
+      //旋转角度以弧度值为参数
+      let degree = (step * 90 * Math.PI) / 180
+      let ctx = canvas.getContext('2d')
+      switch (step) {
+        case 0:
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0)
+          break
+        case 1:
+          canvas.width = height
+          canvas.height = width
+          ctx.rotate(degree)
+          ctx.drawImage(img, 0, -height)
+          break
+        case 2:
+          canvas.width = width
+          canvas.height = height
+          ctx.rotate(degree)
+          ctx.drawImage(img, -width, -height)
+          break
+        case 3:
+          canvas.width = height
+          canvas.height = width
+          ctx.rotate(degree)
+          ctx.drawImage(img, -width, 0)
+          break
+      }
+    }
+  },
 }
-</script>
+</script> 
+
 <style>
-* {
-  -webkit-user-select: none;
-  -ms-touch-select: none;
-  /*
-	-ms-touch-action: none;
-*/
-}
-html {
-  width: 100%;
-  height: 100%;
-}
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: Arial;
-  font-size: 16px;
-  color: #6c6c6c;
-  -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-text-size-adjust: none;
-}
-header {
-  width: 100%;
-  height: 44px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  font-size: 17px;
-  text-align: center;
-  line-height: 44px;
-  background: #d74b28;
-  /*background: -webkit-linear-gradient(top,rgba(215,75,40,1),rgba(215,75,40,0.8));*/
-  z-index: 9999;
-  /*border-bottom: 1px solid rgba(215,75,40,0.8);*/
-  -ms-touch-action: none;
-}
-.nvbt {
-  width: 15%;
-  height: 100%;
-  float: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.nvbt:active {
-  background-color: rgba(170, 170, 170, 0.1);
-}
-.nvtt {
-  width: 70%;
-  height: 100%;
-  color: #cccccc;
-  float: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.content {
-  text-align: center;
-  padding-top: 44px;
-}
-.scontent {
-  width: 100%;
-  position: fixed;
-  top: 44px;
-  bottom: 0px;
-  text-align: center;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  -ms-touch-action: pan-y cross-slide-y;
-  -ms-scroll-chaining: none;
-  -ms-scroll-limit: 0 50 0 50;
-}
-.dcontent {
-  text-align: center;
-  padding-top: 44px;
-  padding-bottom: 80px;
-}
-.sdcontent {
-  width: 100%;
-  position: fixed;
-  top: 44px;
-  bottom: 80px;
-  text-align: center;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  -ms-touch-action: pan-y cross-slide-y;
-  -ms-scroll-chaining: none;
-  -ms-scroll-limit: 0 50 0 50;
-}
-.heading {
-  margin: 0 1em;
-  text-align: left;
-}
-.des {
-  padding: 0 1em;
-  text-align: left;
-  text-indent: 2em;
-  word-break: break-all;
-}
-.logo {
-  width: 100%;
-  text-align: center;
-}
-.button {
-  font-size: 18px;
-  font-weight: normal;
-  text-decoration: none;
+.upload-button {
   display: block;
+  margin-top: 10px;
+}
+.camera-photo {
   text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #fff;
-  background-color: #ffcc33;
-  border: 1px solid #ecb100;
-  padding: 0.5em 0em;
-  margin: 0.5em 0.7em;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  margin-top: 80px;
 }
-.button:active {
-  outline: 0;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-}
-.button-waring {
-  color: #666;
-  background-color: #ebebeb;
-  border-color: #e0e0e0;
-}
-.button-select {
-  font-size: 14px;
-  background-color: #cccccc;
-  border: 0;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-}
-.dlist {
-  padding: 0px;
-  margin: 1em;
-  background: #fff;
-  border: 1px solid #ddd;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-}
-.ditem {
-  overflow: hidden;
-  list-style-type: none;
-  font-size: 1em;
-  padding: 1em;
-  border-bottom: inset 1px #ebebeb;
-  vertical-align: middle;
-}
-.ditem:active {
-  background: #f4f4f4;
-}
-.ditem:last-child {
-  border-bottom: inset 0px #ebebeb;
-}
-.ditem-empty {
-  overflow: hidden;
-  list-style-type: none;
-  font-size: 1em;
-  padding: 1em;
-  vertical-align: middle;
-}
-#output {
-  height: 64px;
-  position: fixed;
+.list-li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  margin-top: 10px;
+  position: relative;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  color: #f00;
-  background: #fff;
-  font-size: 12px;
-  line-height: 16px;
-  word-break: break-all;
-  z-index: 6666;
-  padding: 8px 16px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  border-top: 2px solid #aaa;
-  -webkit-overflow-scrolling: touch;
 }
-.iback {
-  background: no-repeat center center
-    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABYCAYAAAADWlKCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAKwwAACsMBNCkkqwAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOS8xMi8xM5w+I3MAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAACcklEQVR4nO3a0XESURiG4TeO99iBWoGZ+RvADtKBpAPtwBLsANJBrEAs4MyYDmIHSQXkgk0mMLK7ILt8/+F778ici394OGfDsher1Qqn05tTD+A2M4hYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYb089wNCVUq6Ay+blfUQsTjhOZxc1P9tbSlkAX7b+/C0ifpxgnF5Ve2TtwAD4OvIoe1UlSAsGwPsRR9m76kA6MAD+jjTKQVUF0gMD4HaEUQ6umot6T4ybiJgNP83hVbFDasGACnZIT4yfEXE1wjj/Xeod0hPjDpgNPsyRSguyB8Y0Ih6Gn+g4pQSpFQMSgtSMAclAaseARCDngAFJQM4FAxKAnBMGiH8xLKVMgV89ln6MiPthpxkn6R0SEUvgusfSZSnlsnuZftI75LlSygyYdyx7ZH1s/Rl+ouFKAQIvx9ctMGlZlh4lDQhAcywtqRhF+hqyXfMmT1m/6buasL6mzMaY6dilAoENlLuWZRNgnhEl1ZH1ulLKO9bH16eOpdfqz2K9Lt0Oea75EjilfadAsp2SFgQ2UH53LJ2XUr4PPtARSntkbVfL7+rVgEBvlM/NHQDJUh9Z2zWf/puOZbPhJzm8qkDgBaXt/teHcSY5rOpAAJp/c/vclJSrShDYifKI+NPvVV3U/1VzU3LavFyo/25SPUi2qj2ysmYQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsZ4Ak9fPFwUy/HsAAAAASUVORK5CYII=);
-  background-size: 50px 44px;
+.list-link img {
+  width: 150px;
+  height: 150px;
 }
-.idoc {
-  background: no-repeat center center
-    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABYCAYAAAADWlKCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAKwwAACsMBNCkkqwAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOS8xMi8xM5w+I3MAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAC2klEQVR4nO3bMU9TURjG8T9qIpskDjqYUAejm5B3MS4yOJoUNzd0dCJ+Av0IMrrVTSfK5oiT05vAJG64OUp0carDOdBbjLWBYp+W55fckHC5Nyf8c+5pk3Pner0epuPCpAdggxxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEXNp0gMYVWY+BV4DO0AX2I6InYkO6gzMqe9czMwFSog2JcQqsFBPfwW2gW5EdCcywDGTDpKZS0AH6AGPgW/APeAi8AhYAZYal2zRD7T//0Y6PrJBGo+oTeAFME+ZHdfqnxwA+8AP4EY9t8Lg7Dl8tE3N7JEMkpkdYA14FhGdzGwBT4DLQy77Qgl0FXhICdSq5w6oM4cSaH/8ox4P1UV9DXhLWcABrgCfKf/ghb9cc7seUOI8B34CQZk5q5R1iMzcpQTqqH0wUJ0hzUEdLdz15zywSIlzZ4Tb/QL2KLPnFnCfxuyJiLlxjHlcpiHIcQMLd2YuUsK0gOsj3P4rJdAncJCR/CNI08DCnZnzlMdWi+GPN4BXoBdk2r+pLwLrwGaN+A5YBnYjYgN4A3ygzIipoLqon1SbPxfubkS8r797ObmhjWbWgjTdrcc6IPVYGmbaH1kzx0HEOIgYBxHjIGIcRIyDiHEQMQ4ixkHEOIgYBxHjIGIcRIyDiHEQMQ4ixkHEOIgYBxHjIGJUgyzTfznnXJHcBlQ3QO8A1J3vbfobpsfp+5jvd2qSQZrqqwMb9SAz2/TfBWmd8LZ7lFnoIKcVEVuUDdeHb1gdBloadl3DdkR8PKPhnZrkZuuTqO8iNmfP0UZrtQ3Vw8xMkOMy8wElzmpE3Jz0eEY1s0GmlerH3nPLQcQ4iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOI+Q2gWbiBmTXKQQAAAABJRU5ErkJggg==);
-  background-size: 50px 44px;
+.list-link a:visited {
+  background-color: #465c71;
+  border: 1px #4e667d solid;
+  color: #dde4ec;
+  display: flex;
+  line-height: 1.35em;
+  padding: 4px 20px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
 }
-
-.aname {
-  font-size: 16px;
+.list-link a:hover {
+  background-color: #bfcbd6;
+  color: #465c71;
+  text-decoration: none;
 }
-.ainf {
-  font-size: 12px;
+.list-link a:active {
+  background-color: #465c71;
+  color: #cfdbe6;
+  text-decoration: none;
 }
-.iplay {
+.list-img-close {
+  background: #ffffff
+    url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526905315674&di=4c2d6a6985b34e141f37bc9fae7f2209&imgtype=0&src=http%3A%2F%2Fpic.58pic.com%2F58pic%2F15%2F55%2F73%2F39I58PICCqK_1024.png)
+    no-repeat right top;
+  border-color: #ff4a00;
+  background-position: center;
+  background-size: 35px 35px;
   display: block;
-  background: no-repeat right center
-    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABYCAYAAAADWlKCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAKwwAACsMBNCkkqwAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOS8xMi8xM5w+I3MAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAD9UlEQVR4nO2b3XETMRRGDwzvoYOkg5hRAVkqiKmAdIA7wHSQVECoALsC1gXciV0BTge4gvCwgnHk9d/+WF8m97ztxrlXs8fS1Urym6enJxwd3uZugPMcFyKGCxHDhYjhQsRwIWK4EDFciBguRAwXIoYLEcOFiOFCxHAhYrgQMVyIGC5EDBcihgsRw4WI4ULEcCFiuBAx3uVuwDGY2XtgCBTAALjc8tEFMAdKYBJC+HOK9nXBm5dwUM7MCmAEXDcMMQVuQwhlV23qC2khZjYAboGrjkLOgFEIYd5RvM6RrSFmdgs80J0MYqyHGFsSuR4S60TJ9vrwCEziZ+YhhGXy/xdU9aWgqjfnW+IsgEKtvkgJiUPUPfUyZsD42DoQ68+Y+p62AG6UhjAZITt6xopq3L9vGf+Gqh6dJX+S6ilKNaRkU8YCGLSVARBjDGLMdS5jbgkkhMQiWyejSGtEG2KsghopKoU++5AV68ZDcrvXYWTH8Pghdz1R6CHpN3MFDPsc02PsYcy1qy0nJ6uQOANKZz+jfcOUmd3H6W1jYo5RcvsqtikbuXtI+kBmBxbwz8DczMZtksdcsz1tOinZhMRxPF2bGh8R4gz4amZLMxu2aEqa8zq2LQs5e0j6EB8bLv6dAz/NrGwyjMWcj3vadjJyCimS60nLeFfAbzO7bfANT3MXLdvSmJxCBsl12VHcL8AyvpkfSpo7bdvJyCkkfQfocv5/Bnw3s/mBs6Y097aFzd7JPcv6T5dv5GtcAr/2TZN7yt0IGSE908k0+RS8FiEvhhd1yKEFUw5YAVBApoe0XQrZwgL4GEIY7pLRU+5G5OwhC57PZgbAsqPYK6rdxUMXC9Npbro8fzJy9pB0qll0FPcOuDhCRl3ubEvwOYWUyXXb5YoZ1X7GqMHSfZq7bNmWxuQUki5XnDdc+n4EPoUQiiabSzFnejKl7TJOY7IJid/iaXJ7fESIFfCNas+9zQNMc05zHnjIPctKx/mrA9egflCJGLd5eDFXukGWdddQYU+95PlDWVE97GXPeS+oivf6saBZCKHoM+8+cvcQ2NyhOwMmfW4SxdgTNs9oZd0tBAEhsRDfJbcvgbIPKTtOnNzlPnECAkPWP8xsTv3ZrJ1v2UfmuKDqGRt5QgjZ9kDWyd5D1iioP1U4P3KzqZYYY5v0om38rpDpIeCHrUFMCPjPEeSE/COetf3SU/i7EEL2GVUdSjXkGfGBfWDzIFsb/q93dRizU2R7yDr+o09R/GfRzsmRrSGvFRcihgsRw4WI4ULEcCFiuBAxXIgYLkQMFyKGCxHDhYjhQsRwIWK4EDFciBguRAwXIoYLEcOFiOFCxHAhYrgQMf4CVuqCm+17t3sAAAAASUVORK5CYII=);
-  background-size: 50px 44px;
-  -ms-touch-action: auto;
+  float: left;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  margin-top: 0px;
+  margin-left: 135px;
+  padding: 8px;
+  z-index: 10;
+  border-radius: 5px;
+  text-align: center;
+}
+.add-preview {
+  width: 300px;
+  height: 300px;
+}
+.add-preview img {
+  width: 100%;
+  height: 100%;
 }
 </style>

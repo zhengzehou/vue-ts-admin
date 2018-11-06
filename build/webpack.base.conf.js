@@ -33,6 +33,9 @@ module.exports = {
   entry: {
     app: './src/main.ts'
   },
+  externals: {
+    BMap: 'BMap'
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',

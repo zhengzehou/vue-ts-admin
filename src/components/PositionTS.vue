@@ -10,20 +10,19 @@
   </div>
 </template>
 
-<script >
-import BMap from 'BMap'
-// declare var BMap: any
-// let win: any = window
-// let plus: any = win.plus
-export default ({
-  data () {
-    return {
-      title: 'hello vue-html5plus!',
-      city: '',
-      networkType: '',
-    }
-  },
-  mounted () {
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+// import BMap from 'BMap'
+declare var BMap: any
+let win: any = window
+let plus: any = win.plus
+@Component
+export default class PositionVue extends Vue {
+  title = 'hello vue-html5plus!'
+  city = ''
+  networkType = ''
+  mounted() {
     let script = document.createElement('script')
     script.src =
       'http://api.map.baidu.com/api?ak=Zz8ZlyShhuYwxEWSN2SHcmtKsR8So8yc&v=2.0&services=false'
@@ -31,21 +30,22 @@ export default ({
     this.$nextTick(() => {
       navigator.geolocation.getCurrentPosition(
         // 该函数有如下三个参数
-        function (pos) {
+        function(pos) {
           // 如果成果则执行该回调函数
           var lat = pos.coords.latitude
           var lon = pos.coords.longitude
+          // var map = new BMap.Map("allmap");          // 创建地图实例
           var point = new BMap.Point(lon, lat) // 创建坐标点
           // 根据坐标得到地址描述
           var myGeo = new BMap.Geocoder()
-          myGeo.getLocation(point, function (result) {
+          myGeo.getLocation(point, function(result: any) {
             var city = result.addressComponents.city
             // address 具体地址
             // addressComponents 省市县
             alert(JSON.stringify(result))
           })
         },
-        function (err) {
+        function(err) {
           // 如果失败则执行该回调函数
           alert(err.message)
         },
@@ -57,7 +57,7 @@ export default ({
         }
       )
     })
-  },
+  }
   // plusReady() {
   //   let self: any = this
   //   // 获取定位信息
@@ -67,7 +67,7 @@ export default ({
   //   // 获取网络信息
   //   self.networkType = self.$network.getCurrentNetworkType()
   // }
-  created () {
+  created() {
     // if (win.plus) {
     //   console.log('scan created by call plusReady')
     //   this.plusReady()
@@ -76,7 +76,7 @@ export default ({
     //   document.addEventListener('plusready', this.plusReady, false)
     // }
   }
-})
+}
 </script>
 </body>
 </html>

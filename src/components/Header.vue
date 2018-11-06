@@ -1,5 +1,10 @@
 <template>
   <header class="app-header navbar">
+    <div v-if="isWeb" class="showOnApp" style="width: 100%;">
+      <div class="nvbt iback" @click="back()">&nbsp;</div>
+      <div class="nvtt">Gallery</div>
+      <div class="nvbt idoc">&nbsp;</div>
+    </div>
     <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button" @click="mobileSidebarToggle">&#9776;</button>
     <a class="navbar-brand"></a>
     <ul class="nav navbar-nav d-md-down-none">
@@ -67,6 +72,12 @@ let win: any = window
 })
 export default class Header extends Vue {
   //   @Prop() private msg!: string
+  get isWeb() {
+    var u = navigator.userAgent
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1 //android终端
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) //ios终端
+    return isAndroid || isiOS
+  }
   startX = 0
   cloudDropdown = [
     {
@@ -124,6 +135,9 @@ export default class Header extends Vue {
         // this.$message.error(err)
       })
   }
+  back() {
+    window.history.go(-1)
+  }
   dropdownItem(item: any) {
     console.log(item)
   }
@@ -175,29 +189,30 @@ export default class Header extends Vue {
           localStorage.setItem('firstBackTime', new Date().getTime() + '')
           return
         }
-        if (new Date().getTime() - firstBackTime < 2000) {
-          clickTimes = 0
-          localStorage.setItem('clickTimes', '0')
-          if (clickTimes < 1) {
-            plus.nativeUI.alert('再按一次系统退出！')
-            localStorage.setItem('clickTimes', '1')
-          }
+        if (new Date().getTime() - firstBackTime < 1500 && clickTimes < 1) {
+          // localStorage.setItem('clickTimes', '0')
+          // if (clickTimes < 1) {
+          // plus.nativeUI.alert('再按一次系统退出！')
+          plus.nativeUI.toast('再按一次系统退出！')
+          localStorage.setItem('clickTimes', '1')
+          // }
           return
         }
-        localStorage.setItem('firstBackTime', '')
+        localStorage.setItem('firstBackTime', '0')
         localStorage.setItem('clickTimes', '0')
-        'iOS' == plus.os.name
-          ? plus.nativeUI.confirm(
-              '确认退出？',
-              function(e: any) {
-                if (e.index > 0) {
-                  plus.runtime.quit()
-                }
-              },
-              'HelloH5',
-              ['取消', '确定']
-            )
-          : confirm('确认退出？') && plus.runtime.quit()
+        plus.runtime.quit()
+        // 'iOS' == plus.os.name
+        //   ? plus.nativeUI.confirm(
+        //       '确认退出？',
+        //       function(e: any) {
+        //         if (e.index > 0) {
+        //           plus.runtime.quit()
+        //         }
+        //       },
+        //       'HelloH5',
+        //       ['取消', '确定']
+        //     )
+        //   : confirm('确认退出？') && plus.runtime.quit()
       },
       false
     )
@@ -212,15 +227,8 @@ export default class Header extends Vue {
       this.startX = e.touches[0].pageX
     })
     document.addEventListener('touchmove', e => {
-      var moveEndX = e.changedTouches[0].pageX
-      var X = moveEndX - this.startX
-      if (X < -50) {
-        //左滑
-        this.mobileSidebarHide(e)
-      } else if (X > 50) {
-        //右滑
-        this.mobileSidebarShow(e)
-      }
+      // var moveEndX = e.changedTouches[0].pageX
+      // var X = moveEndX - this.startX
     })
     document.addEventListener('touchend', e => {
       var moveEndX = e.changedTouches[0].pageX
@@ -231,6 +239,12 @@ export default class Header extends Vue {
       } else if (X > 200) {
         //右滑
         window.history.go(-1)
+      } else if (X < -50) {
+        //左滑
+        this.mobileSidebarHide(e)
+      } else if (X > 50) {
+        //右滑
+        this.mobileSidebarShow(e)
       }
     })
   }
@@ -288,5 +302,30 @@ a {
 :after,
 :before {
   box-sizing: border-box;
+}
+.iback {
+  background: no-repeat center center
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABYCAYAAAADWlKCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAKwwAACsMBNCkkqwAAABZ0RVh0Q3JlYXRpb24gVGltZQAwOS8xMi8xM5w+I3MAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAACcklEQVR4nO3a0XESURiG4TeO99iBWoGZ+RvADtKBpAPtwBLsANJBrEAs4MyYDmIHSQXkgk0mMLK7ILt8/+F778ici394OGfDsher1Qqn05tTD+A2M4hYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYb089wNCVUq6Ay+blfUQsTjhOZxc1P9tbSlkAX7b+/C0ifpxgnF5Ve2TtwAD4OvIoe1UlSAsGwPsRR9m76kA6MAD+jjTKQVUF0gMD4HaEUQ6umot6T4ybiJgNP83hVbFDasGACnZIT4yfEXE1wjj/Xeod0hPjDpgNPsyRSguyB8Y0Ih6Gn+g4pQSpFQMSgtSMAclAaseARCDngAFJQM4FAxKAnBMGiH8xLKVMgV89ln6MiPthpxkn6R0SEUvgusfSZSnlsnuZftI75LlSygyYdyx7ZH1s/Rl+ouFKAQIvx9ctMGlZlh4lDQhAcywtqRhF+hqyXfMmT1m/6buasL6mzMaY6dilAoENlLuWZRNgnhEl1ZH1ulLKO9bH16eOpdfqz2K9Lt0Oea75EjilfadAsp2SFgQ2UH53LJ2XUr4PPtARSntkbVfL7+rVgEBvlM/NHQDJUh9Z2zWf/puOZbPhJzm8qkDgBaXt/teHcSY5rOpAAJp/c/vclJSrShDYifKI+NPvVV3U/1VzU3LavFyo/25SPUi2qj2ysmYQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsQwilkHEMohYBhHLIGIZRCyDiGUQsZ4Ak9fPFwUy/HsAAAAASUVORK5CYII=);
+  background-size: 50px 44px;
+}
+.nvbt {
+  width: 15%;
+  height: 100%;
+  float: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nvbt:active {
+  background-color: rgba(170, 170, 170, 0.1);
+}
+.nvtt {
+  width: 70%;
+  height: 100%;
+  color: #cccccc;
+  float: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
