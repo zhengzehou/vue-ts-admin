@@ -173,6 +173,12 @@ export default {
       let files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
       let file = files[0];//File对象
+      debugger
+      //去获取拍照时的信息，解决拍出来的照片旋转问题
+      exif.getData(file, function () {
+        Orientation = exif.getTag(self, 'Orientation')
+      })
+
       self.uploadFile = file;
       console.log('onFileChange', file)
       let Orientation = 8;

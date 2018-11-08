@@ -2314,7 +2314,9 @@ base-chart.chart {
 }
 .app-header.navbar .navbar-nav {
   flex-direction: row;
-  align-items: center;
+  /* align-items: center; */
+  align-items: flex-end;
+  padding-bottom: 5px;
 }
 .app-header.navbar .nav-item {
   position: relative;
@@ -3009,8 +3011,16 @@ app-root {
     right: 15px;
     height: inherit;
   }
+  .app-header.navbar {
+    height: 95px;
+    padding-top: 40px;
+  }
   .app-body {
-    margin-top: 55px;
+    margin-top: 95px;
+  }
+  .ivu-dropdown .ivu-select-dropdown {
+    top: 86px !important;
+    right: 3px;
   }
   .sidebar {
     position: fixed;

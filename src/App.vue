@@ -71,6 +71,10 @@ a {
 .ivu-dropdown .ivu-select-dropdown {
   overflow: visible;
   max-height: none;
+  transform-origin: center top 0px;
+  top: 46px;
+  position: fixed;
+  box-shadow: none;
 }
 .ivu-dropdown-menu {
   min-width: 100px;

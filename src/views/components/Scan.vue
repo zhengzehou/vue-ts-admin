@@ -1,5 +1,5 @@
 <template>
-  <div class="animated fadeIn">
+  <div class="animated fadeIn" @before-leave="beforeLeave">
     <div class="ivu-row">
       <div class="scan" v-clickoutside="closeScan">
         <div id="bcid">
@@ -31,9 +31,13 @@ export default class Scan extends Vue {
   codeUrl = ''
   mounted() {
     this.$nextTick(() => {
+      this.closeScan()
       this.startRecognize()
       this.startScan()
     })
+  }
+  beforeLeave() {
+    this.closeScan()
   }
   restart() {
     this.closeScan()

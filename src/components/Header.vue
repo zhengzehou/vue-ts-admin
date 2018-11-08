@@ -1,12 +1,13 @@
 <template>
   <header class="app-header navbar">
-    <div v-if="isWeb" class="showOnApp" style="width: 100%;">
-      <div class="nvbt iback" @click="back()">&nbsp;</div>
+    <div v-if="isApp" class="showOnApp" style="width: 100%;display:block;position: absolute;">
+      <div class="nvbt iback" @click="back()" style="z-index: 9999;">&nbsp;</div>
       <div class="nvtt">Gallery</div>
-      <div class="nvbt idoc">&nbsp;</div>
+      <div class="nvbt idoc"></div>
+      <div style="clear:both;"></div>
     </div>
-    <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button" @click="mobileSidebarToggle">&#9776;</button>
-    <a class="navbar-brand"></a>
+    <button v-if="!isApp" class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button" @click="mobileSidebarToggle">&#9776;</button>
+    <a v-if="!isApp" class="navbar-brand"></a>
     <ul class="nav navbar-nav d-md-down-none">
       <li class="nav-item">
         <a class="nav-link navbar-toggler sidebar-toggler" @click="sidebarMinimize">&#9776;</a>
@@ -72,7 +73,7 @@ let win: any = window
 })
 export default class Header extends Vue {
   //   @Prop() private msg!: string
-  get isWeb() {
+  get isApp() {
     var u = navigator.userAgent
     var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1 //android终端
     var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) //ios终端
@@ -178,6 +179,7 @@ export default class Header extends Vue {
     plus.key.addEventListener(
       'backbutton',
       function() {
+        console.log('backbutton click')
         window.history.go(-1)
         var clickTimes = localStorage.getItem('clickTimes')
           ? Number(localStorage.getItem('clickTimes'))
@@ -218,11 +220,12 @@ export default class Header extends Vue {
     )
   }
   created() {
-    if (win.plus) {
-      this.plusReady()
-    } else {
-      document.addEventListener('plusready', this.plusReady, false)
-    }
+    // if (win.plus) {
+    //   this.plusReady()
+    // } else {
+    //   // document.addEventListener('plusready', this.plusReady, false)
+    //   this.$on('plusready', this.plusReady)
+    // }
     document.addEventListener('touchstart', e => {
       this.startX = e.touches[0].pageX
     })
@@ -239,7 +242,9 @@ export default class Header extends Vue {
       } else if (X > 200) {
         //右滑
         window.history.go(-1)
-      } else if (X < -50) {
+      }
+      //sliderbar
+      if (X < -50) {
         //左滑
         this.mobileSidebarHide(e)
       } else if (X > 50) {
@@ -315,6 +320,9 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 17px;
+  text-align: center;
+  line-height: 44px;
 }
 .nvbt:active {
   background-color: rgba(170, 170, 170, 0.1);
@@ -327,5 +335,8 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 17px;
+  text-align: center;
+  line-height: 44px;
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
   <header class="app-header navbar">
-    <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button" @click="mobileSidebarToggle">&#9776;</button>
     <a class="navbar-brand"></a>
-
   </header>
 </template>
 <script lang="ts">

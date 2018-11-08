@@ -14,7 +14,7 @@
         </span>
       </a>
     </div>
-    <dropdown-item @dropdown-item="dropdownItem" :show="show" :dropdown-items="dropdownItems"></dropdown-item>
+    <dropdown-item @dropdown-item="dropdownItem" :show="show" :top="top" :dropdown-items="dropdownItems"></dropdown-item>
   </div>
 </template>
 <script lang="ts">
@@ -29,7 +29,8 @@ import DropdownItem from './DropdownItem.vue'
     icon: String,
     iconColor: String,
     imgUrl: String,
-    dropdownItems: Array
+    dropdownItems: Array,
+    top: [String, Number]
   }
 })
 export default class Dropdown extends Vue {

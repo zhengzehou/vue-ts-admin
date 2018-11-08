@@ -9,7 +9,6 @@
     </div>
   </div>
 </template>
-
 <script >
 import BMap from 'BMap'
 // declare var BMap: any
@@ -24,38 +23,28 @@ export default ({
     }
   },
   mounted () {
-    let script = document.createElement('script')
-    script.src =
-      'http://api.map.baidu.com/api?ak=Zz8ZlyShhuYwxEWSN2SHcmtKsR8So8yc&v=2.0&services=false'
-    document.body.appendChild(script)
-    this.$nextTick(() => {
-      navigator.geolocation.getCurrentPosition(
-        // 该函数有如下三个参数
-        function (pos) {
-          // 如果成果则执行该回调函数
-          var lat = pos.coords.latitude
-          var lon = pos.coords.longitude
-          var point = new BMap.Point(lon, lat) // 创建坐标点
-          // 根据坐标得到地址描述
-          var myGeo = new BMap.Geocoder()
-          myGeo.getLocation(point, function (result) {
-            var city = result.addressComponents.city
-            // address 具体地址
-            // addressComponents 省市县
-            alert(JSON.stringify(result))
-          })
-        },
-        function (err) {
-          // 如果失败则执行该回调函数
-          alert(err.message)
-        },
-        {
-          // 附带参数
-          enableHighAccuracy: false, // 提高精度(耗费资源)
-          timeout: 3000, // 超过timeout则调用失败的回调函数
-          maximumAge: 1000 // 获取到的地理信息的有效期，超过有效期则重新获取一次位置信息
-        }
-      )
+    let that = this
+    var geolocation = new BMap.Geolocation();
+    //调用百度地图api 中的获取当前位置接口
+    geolocation.getCurrentPosition(function (r) {
+      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+        //获取当前位置经纬度
+        var myGeo = new BMap.Geocoder();
+        myGeo.getLocation(new BMap.Point(r.point.lng, r.point.lat), function (result) {
+          if (result) {
+            var lat = r.point.lat;
+            var lon = r.point.lng;
+            var point = new BMap.Point(lon, lat) // 创建坐标点
+            myGeo.getLocation(point, function (result) {
+              var city = result.addressComponents.city
+              // address 具体地址
+              // addressComponents 省市县
+              that.city = city
+              that.networkType = JSON.stringify(result)
+            })
+          }
+        });
+      }
     })
   },
   // plusReady() {

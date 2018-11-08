@@ -52,6 +52,11 @@ export const constantRouterMap = [
             path: 'form',
             name: 'form',
             component: getComponent('views/components/Forms.vue')
+          },
+          {
+            path: 'dialog',
+            name: 'dialog',
+            component: getComponent('views/components/Dialogs.vue')
           }
         ]
       },

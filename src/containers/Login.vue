@@ -94,6 +94,22 @@ export default class Login extends Vue {
   }
   login() {
     let that = this
+    if (!this.userName || !this.password) {
+      alert('用户名或密码不能为空')
+      return
+    } else {
+      //验证是否含有特殊字符，防止xss注入
+      var userNameReg = /^[a-zA-Z0-9_]{3,20}$/
+      var passwordReg = /['!<>%;]{1,}/
+      if (!userNameReg.test(this.userName)) {
+        alert('用户名输入不合法')
+        return
+      }
+      if (passwordReg.test(this.password)) {
+        alert('密码中输入了不合法字符')
+        return
+      }
+    }
     loginByUsername(this.userName, this.password)
       .then(_ => {
         var token = _.data.token

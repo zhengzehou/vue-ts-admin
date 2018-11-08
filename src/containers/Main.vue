@@ -1,8 +1,8 @@
 <template>
   <div class="app">
-    <AppHeader/>
+    <AppHeader />
     <div class="app-body">
-      <Sidebar/>
+      <Sidebar />
       <main class="main">
         <breadcrumb :list="list" />
         <div class="container-fluid">
@@ -11,7 +11,7 @@
       </main>
       <!-- <AppAside/> -->
     </div>
-    <AppFooter/>
+    <AppFooter />
   </div>
 </template>
 

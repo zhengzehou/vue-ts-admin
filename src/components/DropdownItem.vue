@@ -1,5 +1,5 @@
 <template>
-    <div class="ivu-select-dropdown animated fadeIn" style="transform-origin: center top 0px;top:46px;position:fixed;box-shadow: none;" v-if="show">
+    <div class="ivu-select-dropdown animated fadeIn" v-if="show">
         <ul class="ivu-dropdown-menu">
             <li class="ivu-dropdown-item" :key="index" @click="dropdownItem(item)" v-for="(item,index) of dropdownItems" :class="item.divided?'ivu-dropdown-item-divided':''">
                 <p class="dropdown-itemp">

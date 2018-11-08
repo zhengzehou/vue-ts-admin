@@ -48,6 +48,12 @@ export default class SidebarItem extends Vue {
   get currentItem() {
     return this.currentItem2
   }
+  get isApp() {
+    var u = navigator.userAgent
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1 //android终端
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) //ios终端
+    return isAndroid || isiOS
+  }
   handleClick(index: number, path: string) {
     if (this.currentItem2 === index) {
       this.currentItem2 = -1
@@ -61,6 +67,7 @@ export default class SidebarItem extends Vue {
   addActive(path: string, index: number) {
     this.currentItem2 = index
     this.currentSubPath = path
+    if (this.isApp) document.body.classList.toggle('sidebar-mobile-show')
   }
   created() {
     this.currentSubPath = this.$router.currentRoute.path
