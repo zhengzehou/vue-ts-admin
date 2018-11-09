@@ -283,6 +283,12 @@ fieldset[disabled] .ivu-btn:hover {
 .ivu-icon-load-c:before {
   content: '\F29C';
 }
+.icon-load-a:before {
+  content: '\f29a';
+}
+.icon-load-b:before {
+  content: '\f29b';
+}
 .ivu-icon-checkmark-round:before {
   content: '\F121';
 }

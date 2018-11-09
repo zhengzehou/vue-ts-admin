@@ -67,5 +67,5 @@ Message.closeAll = function() {
   }
 }
 
-Vue.prototype.$toast = Message
+Vue.prototype.$message = Message
 export default Message

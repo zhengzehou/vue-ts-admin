@@ -9,6 +9,7 @@
                 <Button @click="confirm">打开提示框confirm</Button>
                 <Button @click="promt">打开提示框promt</Button>
                 <Button @click="defaultDialog">打开提示框default</Button>
+                <Button @click="loading">Loading</Button>
                 <Dialog title="提示" :visible.sync="dialogVisible" width="300px" top="150px" :before-close="handleClose">
                     <span>这是一段信息</span>
                     <div>
@@ -42,9 +43,22 @@ export default class Dialogs extends Vue {
   ok() {
     alert(this.inputMsg)
   }
+  loading() {
+    let that: any = this
+    const loading = that.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'ivu-icon-load-c ivu-load-loop',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+
+    setTimeout(() => {
+      loading.close()
+    }, 2000)
+  }
   toast() {
     let that: any = this
-    that.$toast({ message: '这是一个message', duration: 5000, type: 'error' })
+    that.$message({ message: '这是一个message', duration: 5000, type: 'error' })
   }
   defaultDialog() {
     let that: any = this
@@ -55,7 +69,7 @@ export default class Dialogs extends Vue {
     that.$alert('这是一段内容', '标题名称alert', {
       confirmButtonText: '确定',
       callback: (action: any) => {
-        that.$toast({
+        that.$message({
           type: 'info',
           message: `action: ${action}`
         })
@@ -67,7 +81,7 @@ export default class Dialogs extends Vue {
     that.$confirm('这是一段内容', '标题名称confirm', {
       confirmButtonText: '确定',
       callback: (action: any) => {
-        that.$toast({
+        that.$message({
           type: 'info',
           message: `action: ${action}`
         })
@@ -79,7 +93,7 @@ export default class Dialogs extends Vue {
     that.$prompt('这是一段内容', '标题名称prompt', {
       confirmButtonText: '确定',
       callback: (action: any, data: any) => {
-        that.$toast({
+        that.$message({
           type: 'info',
           message: `action: ${action}>>>${data.inputValue}`
         })
@@ -149,13 +163,15 @@ export default class Dialogs extends Vue {
 }
 
 .el-message {
-  min-width: 380px;
+  min-width: 150px;
+  max-width: 380px;
+  width: 80%;
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid #ebeef5;
   position: fixed;
   left: 50%;
-  top: 20px;
+  top: 50%;
   transform: translateX(-50%);
   background-color: #edf2fc;
   transition: opacity 0.3s, transform 0.4s;
@@ -261,6 +277,9 @@ export default class Dialogs extends Vue {
   text-align: left;
   overflow: hidden;
   backface-visibility: hidden;
+  width: 80%;
+  min-width: 200px;
+  max-width: 420px;
 }
 .el-message-box__header {
   position: relative;
@@ -330,6 +349,36 @@ export default class Dialogs extends Vue {
   opacity: 0.5;
   background: #000;
   z-index: 2013;
+}
+
+.el-loading-mask {
+  position: absolute;
+  z-index: 2000;
+  background-color: hsla(0, 0%, 100%, 0.9);
+  margin: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transition: opacity 0.3s;
+}
+.el-loading-mask.is-fullscreen {
+  position: fixed;
+}
+.el-loading-spinner {
+  top: 50%;
+  margin-top: -21px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+}
+.el-loading-spinner i {
+  color: #409eff;
+}
+.el-loading-spinner .el-loading-text {
+  color: #409eff;
+  margin: 3px 0;
+  font-size: 14px;
 }
 
 .demo-box.demo-dialog .el-dialog__wrapper {
