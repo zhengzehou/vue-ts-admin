@@ -1,6 +1,7 @@
 import axios from 'axios'
-// import store from '@/store'
-// import vue from 'vue'
+import { dateUtils } from '@/utils/DateUtils'
+import { getCookieToken } from '@/service/login'
+// import Vue from 'vue'
 // import router from '../router';
 
 // 创建axios实例
@@ -12,10 +13,12 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    config.headers.common['Authorization'] = 'AUTH_TOKEN'
+    config.headers.common['Authorization'] = getCookieToken() //this.$store.state.user.token
     // config.headers.common['ContentType'] = 'application/json;charset=UTF-8'
     config.headers.post['Content-Type'] = 'application/json; charset=UTF-8'
-    config.headers.common['TOKEN'] = 'testToken'
+    config.headers.common['timestamp'] = new Date().getTime()
+    config.headers.common['nonce'] = dateUtils.uuid(32, 16)
+    // config.headers.common['TOKEN'] = 'testToken'
     return config
   },
   error => {

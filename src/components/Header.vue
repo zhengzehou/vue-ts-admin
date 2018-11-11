@@ -23,16 +23,13 @@
         </router-link>
       </li>
       <li class="nav-item header-item">
-
-        <router-link tag="div" to='/home1' style="height:55px;" class="nav-link">
+        <router-link tag="div" to='/' style="height:55px;" class="nav-link">
           <p>
             <i class="ivu-icon ivu-icon-stats-bars" style="font-size: 30px; color: rgb(45, 140, 240);"></i>
           </p>
           <p style="color:white"> 浏览排行 </p>
         </router-link>
-
       </li>
-
       <li class="nav-item header-item">
         <router-link tag="div" to='/' style="height:55px;" class="nav-link">
           <dropdown @dropdown-item="dropdownItem" layout="vertical" icon="ivu-icon-cloud" icon-color="rgb(45, 140, 240)" :dropdown-items="cloudDropdown"></dropdown>
@@ -40,7 +37,7 @@
       </li>
 
       <li class="nav-item header-item">
-        <router-link tag="div" to='/home1' style="height:55px;" class="nav-link">
+        <router-link tag="div" to='/' style="height:55px;" class="nav-link">
           <p>
             <i class="ivu-icon ivu-icon-trophy" style="font-size: 30px; color: rgb(45, 140, 240);"></i>
           </p>

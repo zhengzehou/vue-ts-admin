@@ -23,7 +23,7 @@ import AppFooter from '../components/Footer.vue'
 import Breadcrumb from '../components/Breadcrumb.vue'
 import Component from 'vue-class-component'
 import Vue from 'vue'
-
+import { loadPermission } from '@/service/login'
 @Component({
   components: {
     AppHeader,
@@ -47,6 +47,21 @@ export default class Main extends Vue {
   // ]
   get list() {
     return this.$route.matched
+  }
+  created() {
+    let that: any = this
+    //load user permission and menus
+    loadPermission()
+      .then((_: any) => {
+        if (_.data.status != 200) {
+          that.$message({ message: _.data.message, type: 'warning' })
+          return
+        }
+        that.$store.state.permission.routers = _.data.data
+      })
+      .catch((_: any) => {
+        that.$message({ message: _.message, type: 'error' })
+      })
   }
 }
 </script>

@@ -1,14 +1,23 @@
 import fetch from '../utils/fetch'
 import '../mock/mock'
 
-export function loginByUsername(name: string, password: string) {
-  const data = { name, password }
+export function loginByUsername(username: string, password: string) {
+  const data = { username: username, password: password }
   return fetch({
-    url: '/login/loginbyname',
+    url: 'http://localhost:8081/auth-service/jwt/token',
     method: 'post',
-    data
+    params: data
   })
 }
+
+export function loadPermission() {
+  return fetch({
+    url: 'http://localhost:8081/auth-service/users/menus',
+    method: 'post',
+    params: {}
+  })
+}
+
 export function clearCookieToken() {
   var userName = encodeURI('userName')
   var key: any = localStorage.getItem(userName)
@@ -66,6 +75,14 @@ export function logout(username: string) {
     url: '/login/logout',
     method: 'post',
     data: { username }
+  })
+}
+
+export function getUserPermissionInfo(token: string) {
+  return fetch({
+    url: '/user/info',
+    method: 'get',
+    params: { token }
   })
 }
 

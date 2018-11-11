@@ -63,7 +63,12 @@ import QRCode from '../components/LoginQRCode.vue'
 import Component from 'vue-class-component'
 import Vue from 'vue'
 
-import { qrLogin, loginByUsername, setCookieToken } from '@/service/login'
+import {
+  qrLogin,
+  loginByUsername,
+  setCookieToken,
+  loadPermission
+} from '@/service/login'
 import { setTimeout, setInterval } from 'timers'
 
 @Component({
@@ -110,9 +115,21 @@ export default class Login extends Vue {
         return
       }
     }
+    const loading = that.$loading({
+      lock: true,
+      text: 'Loading',
+      spinner: 'ivu-icon-load-c ivu-load-loop',
+      background: 'rgba(0, 0, 0, 0.1)'
+    })
     loginByUsername(this.userName, this.password)
-      .then(_ => {
-        var token = _.data.token
+      .then((_: any) => {
+        loading.close()
+        if (_.data.status !== 200) {
+          // that.$message({ message: _.data.message, type: 'error' })
+          that.$alert(_.data.message)
+          return
+        }
+        var token = _.data.data
         setCookieToken(this.userName, token)
         that.$store.state.user.name = that.userName
         that.$store.state.user.token = token
@@ -124,7 +141,10 @@ export default class Login extends Vue {
         that.$router.push({ path: redirect })
       })
       .catch(_ => {
+        debugger
+        that.$message({ message: _.data.message, type: 'error' })
         console.log('catch>>>>>>>>', _)
+        loading.close()
       })
   }
   qrLogin() {

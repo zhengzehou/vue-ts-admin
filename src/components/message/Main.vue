@@ -7,8 +7,8 @@
         showClose ? 'is-closable' : '',
         customClass
       ]" v-show="visible" @mouseenter="clearTimer" @mouseleave="startTimer" role="alert">
-      <i :class="iconClass" class="ivu-icon" v-if="iconClass"></i>
-      <i :class="typeClass" class="ivu-icon" v-else></i>
+      <i style="font-size:24px;" :class="iconClass" class="ivu-icon" v-if="iconClass"></i>
+      <i style="font-size:24px;" :class="typeClass" class="ivu-icon" v-else></i>
       <slot>
         <p v-if="!dangerouslyUseHTMLString" class="el-message__content">{{ message }}</p>
         <p v-else v-html="message" class="el-message__content"></p>

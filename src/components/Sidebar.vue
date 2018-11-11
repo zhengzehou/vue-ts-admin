@@ -19,9 +19,10 @@ export default class Sidebar extends Vue {
     e.preventDefault()
     // e.target.parentElement.classList.toggle('open')
   }
-  created() {
-    console.log(this.$store.getters.siderbar_routers[0])
-  }
+  // created() {
+  //   debugger
+  //   console.log(this.$store.getters.siderbar_routers[0].children)
+  // }
 }
 </script>
 

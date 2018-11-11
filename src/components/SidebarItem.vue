@@ -71,7 +71,8 @@ export default class SidebarItem extends Vue {
   }
   created() {
     this.currentSubPath = this.$router.currentRoute.path
-    console.log(this.$props.routes)
+    // debugger
+    // console.log(this.$props.routes)
     if (this.$props.routes)
       for (var i = 0; i < this.$props.routes.length; i++) {
         let it = this.$props.routes[i]
