@@ -53,7 +53,7 @@
       <div class="el-scrollbar">
         <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
           <ul class="el-scrollbar__view el-select-dropdown__list">
-            <Option v-for="item in options" :selected="value == item.value || value.indexOf(item.value) >= 0" :key="item.value" :label="item.label" :value="item.value" @click="handleOptionSelect(item,$event)"></Option>
+            <Option v-for="item in options" :selected="isSelected(item.value)" :key="item.value" :label="item.label" :value="item.value" @click="handleOptionSelect(item,$event)"></Option>
           </ul>
         </div>
         <div class="el-scrollbar__bar is-horizontal">
@@ -177,6 +177,8 @@ export default class Select extends Vue {
     this.curPlaceholder = this.$props.placeholder
   }
   get currentValue() {
+    // let that: any = this
+    // that.$message(this.$props.value)
     if (this.$props.multiple) {
       const isObject =
         Object.prototype.toString.call(this.$props.value).toLowerCase() ===
@@ -208,6 +210,12 @@ export default class Select extends Vue {
 
     return this.currentVal
   }
+  isSelected(value: any) {
+    return (
+      this.$props.value == value ||
+      (value && value.length > 0 && this.$props.value.indexOf(value) >= 0)
+    )
+  }
   get inputDisabled() {
     return this.$props.disabled || (this.$props.elForm || {}).disabled
   }
@@ -232,18 +240,20 @@ export default class Select extends Vue {
   }
   handleBlur(event: any) {
     this.focused = false
-    this.$emit('blur', event)
+    // this.$emit('blur', event)
   }
   handleFocus(event: any) {
     this.focused = true
     this.visible = true
     this.menuVisibleOnFocus = true
-    this.$emit('focus', event)
+    // this.$emit('focus', event)
   }
   handleComposition(event: any) {
     if (event.type === 'compositionend') {
+      debugger
       this.isOnComposition = false
-      this.currentVal = this.valueBeforeComposition
+      let input: any = this.$refs.input
+      this.currentVal = input.value
       this.valueBeforeComposition = null
       this.handleInput(event)
     } else {

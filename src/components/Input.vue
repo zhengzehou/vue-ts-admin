@@ -159,9 +159,8 @@ export default class Input extends Vue {
   }
   handleInput(event: any) {
     const value = event.target.value
-    this.setCurrentValue(value)
-    if (this.isOnComposition) return
     this.$emit('input', value)
+    this.setCurrentValue(value)
   }
   handleChange(event: any) {
     this.$emit('change', event.target.value)

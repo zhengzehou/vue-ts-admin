@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <AppHeader />
+    <AppHeader :title="title" />
     <div class="app-body">
       <Sidebar />
       <main class="main">
@@ -34,9 +34,9 @@ import { loadPermission } from '@/service/login'
   }
 })
 export default class Main extends Vue {
-  // get name() {
-  //   return this.$route.name
-  // }
+  get title() {
+    return '集采用户中心'
+  }
   // get list() {
   //   return this.$route.matched
   // }

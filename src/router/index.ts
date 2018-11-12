@@ -49,7 +49,7 @@ export const constantRouterMap = [
             path: 'department',
             name: '部门信息',
             icon: 'department',
-            component: getComponent('views/components/Users.vue')
+            component: getComponent('views/components/Department.vue')
           },
           {
             path: 'jobs',

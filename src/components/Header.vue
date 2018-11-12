@@ -13,6 +13,7 @@
         <a class="nav-link navbar-toggler sidebar-toggler" @click="sidebarMinimize">&#9776;</a>
       </li>
     </ul>
+    <Button v-if="!isApp && title" class="header-title" type="text">{{title}}</Button>
     <ul class="nav navbar-nav d-md-down-none">
       <li class="nav-item header-item">
         <router-link tag="div" to='/' style="height:55px;" class="nav-link">
@@ -63,10 +64,12 @@
 <script lang="ts">
 import { Component, /* Prop, */ Vue } from 'vue-property-decorator'
 import Dropdown from './Dropdown.vue'
+import Button from './Button.vue'
 // import clickoutside from '@/directives/CustomDirectives'
 let win: any = window
 @Component({
-  components: { Dropdown }
+  components: { Dropdown, Button },
+  props: { title: String }
 })
 export default class Header extends Vue {
   //   @Prop() private msg!: string
@@ -335,5 +338,10 @@ a {
   font-size: 17px;
   text-align: center;
   line-height: 44px;
+}
+.header-title {
+  font-size: 18px;
+  color: snow;
+  font-weight: 700;
 }
 </style>
