@@ -3,25 +3,24 @@
     <div class="row">
       <div class="col col-span-24">
         <div class="doc-header">
-          <!-- <Card style="width:350px">
-        <p slot="title">
-            <Icon type="ios-film-outline"></Icon>
-            经典电影
-        </p>
-        <a href="#" slot="extra" @click.prevent="changeLimit">
-            <Icon type="ios-loop-strong"></Icon>
-            换一换
-        </a>
-        <ul>
-            <li v-for="item in randomMovieList">
-                <a :href="item.url" target="_blank">{{ item.name }}</a>
-                <span>
-                    <Icon type="ios-star" v-for="n in 4" :key="n" color="#ffac2d"></Icon><Icon type="ios-star" v-if="item.rate >= 9.5" color="#ffac2d"></Icon><Icon type="ios-star-half" v-else color="#ffac2d"></Icon>
-                    {{ item.rate }}
-                </span>
-            </li>
-        </ul>
-    </Card> -->
+          <Card style="width:100%;">
+            <div slot="header">
+              <span>经典电影</span>
+              <Button type="text" class="el-button--text" style="float: right;padding: 3px 0px;" @click.prevent="changeLimit">
+                换一换
+              </Button>
+            </div>
+
+            <div v-for="item in randomMovieList" class="text item">
+              <a :href="item.url" target="_blank">{{ item.name }}</a>
+              <span>
+                <i type="ios-star" v-for="n in 4" :key="n" color="#ffac2d"></i>
+                <i type="ios-star" v-if="item.rate >= 9.5" color="#ffac2d"></i>
+                <i type="ios-star-half" v-else color="#ffac2d"></i>
+                {{ item.rate }}
+              </span>
+            </div>
+          </Card>
 
         </div>
         <div style="" class="doc-content">
@@ -38,9 +37,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Card from '@/components/Card.vue'
+import Button from '@/components/Button.vue'
 
-@Component
-export default class Card extends Vue {
+@Component({ components: { Card, Button } })
+export default class Cards extends Vue {
   movieList = [
     {
       name: '肖申克的救赎',

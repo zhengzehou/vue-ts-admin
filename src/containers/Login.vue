@@ -141,8 +141,7 @@ export default class Login extends Vue {
         that.$router.push({ path: redirect })
       })
       .catch(_ => {
-        debugger
-        that.$message({ message: _.data.message, type: 'error' })
+        that.$message({ message: _.message, type: 'error' })
         console.log('catch>>>>>>>>', _)
         loading.close()
       })

@@ -192,7 +192,7 @@ export default class Select extends Vue {
       if (this.currentVal) {
         for (var i = 0; i < this.$props.list.length; i++) {
           let it = this.$props.list[i]
-          if (it.value == this.currentVal) return it.label
+          if (it.value === this.currentVal) return it.label
         }
         return this.currentVal
       }
@@ -200,9 +200,9 @@ export default class Select extends Vue {
         this.$props.value === undefined || this.$props.value === null
           ? ''
           : this.$props.value
-      for (var i = 0; i < this.$props.list.length; i++) {
+      for (i = 0; i < this.$props.list.length; i++) {
         let it = this.$props.list[i]
-        if (it.value == this.currentVal) return it.label
+        if (it.value === this.currentVal) return it.label
       }
     }
 
@@ -262,7 +262,7 @@ export default class Select extends Vue {
       this.selected = item
     } else {
       if (this.$props.filterable) {
-        if (item.target.value == '') {
+        if (item.target.value === '') {
           this.clear()
         } else {
           this.currentVal = item.target.value

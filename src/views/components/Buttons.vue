@@ -168,7 +168,7 @@ export default class Buttons extends Vue {
     })
   }
   created() {
-    // alert(1)
+    alert(1)
   }
 }
 </script>

@@ -67,15 +67,15 @@ export default class FileUpload extends Vue {
     //最小与最大旋转方向，图片旋转4次后回到原方向
     const min_step = 0
     const max_step = 3
-    if (img == null) return
+    if (img === null) return
     //img的高度和宽度不能在img元素隐藏后获取，否则会出错
     let height = img.height
     let width = img.width
     let step = 2
-    if (step == null) {
+    if (step === null) {
       step = min_step
     }
-    if (direction == 'right') {
+    if (direction === 'right') {
       step++
       //旋转到原位置，即超过最大值
       step > max_step && (step = min_step)
@@ -115,18 +115,18 @@ export default class FileUpload extends Vue {
   postImg() {
     console.log(this.headerImage)
     alert('upload file')
-    //这里写接口
+    // 这里写接口
   }
   compress(img: any, Orientation: any) {
     let canvas = document.createElement('canvas')
     let ctx: any = canvas.getContext('2d')
-    //瓦片canvas
+    // 瓦片canvas
     let tCanvas = document.createElement('canvas')
     let tctx = tCanvas.getContext('2d')
     let initSize = img.src.length
     let width = img.width
     let height = img.height
-    //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+    // 如果图片大于四百万像素，计算压缩比并将大小压至400万以下
     let ratio
     if ((ratio = (width * height) / 4000000) > 1) {
       console.log('大于400万像素')
@@ -141,7 +141,7 @@ export default class FileUpload extends Vue {
     //    铺底色
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    //如果图片像素大于100万则使用瓦片绘制
+    // 如果图片像素大于100万则使用瓦片绘制
     let count
     if ((count = (width * height) / 1000000) > 1) {
       console.log('超过100W像素')
@@ -170,22 +170,22 @@ export default class FileUpload extends Vue {
     } else {
       ctx.drawImage(img, 0, 0, width, height)
     }
-    //修复ios上传图片的时候 被旋转的问题
+    // 修复ios上传图片的时候 被旋转的问题
     if (Orientation != '' && Orientation != 1) {
       switch (Orientation) {
-        case 6: //需要顺时针（向左）90度旋转
+        case 6: // 需要顺时针（向左）90度旋转
           this.rotateImg(img, 'left', canvas)
           break
-        case 8: //需要逆时针（向右）90度旋转
+        case 8: // 需要逆时针（向右）90度旋转
           this.rotateImg(img, 'right', canvas)
           break
-        case 3: //需要180度旋转
+        case 3: // 需要180度旋转
           this.rotateImg(img, 'right', canvas) //转两次
           this.rotateImg(img, 'right', canvas)
           break
       }
     }
-    //进行最小压缩
+    // 进行最小压缩
     let ndata = canvas.toDataURL('image/jpeg', 0.1)
     console.log('压缩前：' + initSize)
     console.log('压缩后：' + ndata.length)

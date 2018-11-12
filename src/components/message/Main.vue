@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div :class="[
+    <div style="z-index:2014;" :class="[
         'el-message',
         type && !iconClass ? `el-message--${ type }` : '',
         center ? 'is-center' : '',

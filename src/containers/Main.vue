@@ -53,7 +53,7 @@ export default class Main extends Vue {
     //load user permission and menus
     loadPermission()
       .then((_: any) => {
-        if (_.data.status != 200) {
+        if (_.data.status !== 200) {
           that.$message({ message: _.data.message, type: 'warning' })
           return
         }

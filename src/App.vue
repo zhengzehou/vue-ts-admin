@@ -979,4 +979,80 @@ fieldset[disabled] .ivu-btn:hover {
   margin: 3px 0;
   font-size: 14px;
 }
+
+/**icons*/
+.ivu-icon-settings:before {
+  content: '\f2f7';
+}
+.ivu-icon-scanner:before {
+  content: '\f346';
+}
+.ivu-icon-navigate:before {
+  content: '\f2a3';
+}
+.ivu-icon-social-instagram:before {
+  content: '\f351';
+}
+.ivu-icon-locked:before {
+  content: '\f458';
+}
+.ivu-icon-users:before {
+  content: '\f212';
+}
+.ivu-icon-menu:before {
+  content: '\f20d';
+}
+.ivu-icon-user-role:before {
+  content: '\f211';
+}
+.ivu-icon-department:before {
+  content: '\f229';
+}
+.ivu-icon-job:before {
+  content: '\f357';
+}
+.ivu-icon-group:before {
+  content: '\f484';
+}
+.ivu-icon-collapse:before {
+  content: '\f393';
+}
+.ivu-icon-company:before {
+  content: '\f390';
+}
+/**Card*/
+.el-card {
+  border-radius: 4px;
+  border: 1px solid #ebeef5;
+  background-color: #fff;
+  overflow: hidden;
+  color: #303133;
+  transition: 0.3s;
+}
+.el-card.is-always-shadow,
+.el-card.is-hover-shadow:focus,
+.el-card.is-hover-shadow:hover {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.el-card__header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #ebeef5;
+  box-sizing: border-box;
+}
+.el-card__body {
+  padding: 20px;
+}
+.item {
+  margin-bottom: 18px;
+}
+.text {
+  font-size: 14px;
+}
+.el-button--text {
+  border-color: transparent;
+  color: #409eff;
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
 </style>
