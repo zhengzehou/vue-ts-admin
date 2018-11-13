@@ -16,7 +16,7 @@
         <span class="input-suffix-inner">
           <template v-if="!showClear">
             <slot name="suffix"></slot>
-            <i class="ivu-icon" v-if="suffixIcon" :class="suffixIcon"></i>
+            <i class="ivu-icon" @click="suffixIconClick" v-if="suffixIcon" :class="suffixIcon"></i>
           </template>
           <i v-else class="ivu-icon icon-circle-close input-clear" @click="clear"></i>
         </span>
@@ -180,6 +180,9 @@ export default class Input extends Vue {
     this.$emit('change', '')
     this.$emit('clear')
     this.setCurrentValue('')
+  }
+  suffixIconClick() {
+    this.$emit('suffix-icon-click')
   }
 }
 </script>

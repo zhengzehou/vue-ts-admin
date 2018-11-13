@@ -18,6 +18,8 @@ service.interceptors.request.use(
     config.headers.post['Content-Type'] = 'application/json; charset=UTF-8'
     config.headers.common['timestamp'] = new Date().getTime()
     config.headers.common['nonce'] = dateUtils.uuid(32, 16)
+    // config.headers.common['SelfCookie'] = document.cookie
+    // console.log('SelfCookie=' + document.cookie)
     // config.headers.common['TOKEN'] = 'testToken'
     return config
   },

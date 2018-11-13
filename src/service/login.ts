@@ -4,7 +4,7 @@ import '../mock/mock'
 export function loginByUsername(username: string, password: string) {
   const data = { username: username, password: password }
   return fetch({
-    url: 'http://localhost:8081/auth-service/jwt/token',
+    url: 'http://beta11.ule.com:9001/auth-service/jwt/token',
     method: 'post',
     params: data
   })
@@ -12,7 +12,7 @@ export function loginByUsername(username: string, password: string) {
 
 export function loadPermission() {
   return fetch({
-    url: 'http://localhost:8081/auth-service/users/menus',
+    url: 'http://beta11.ule.com:9001/auth-service/users/menus',
     method: 'post',
     params: {}
   })

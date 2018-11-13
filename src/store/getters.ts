@@ -17,4 +17,5 @@ const getters = {
   addRouters: (state: State) => state.permission.addRouters,
   siderbar_routers: (state: State) => state.permission.siderbar_routers
 }
+
 export default getters

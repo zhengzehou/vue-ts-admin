@@ -213,7 +213,10 @@ export default class Select extends Vue {
   isSelected(value: any) {
     return (
       this.$props.value == value ||
-      (value && value.length > 0 && this.$props.value.indexOf(value) >= 0)
+      (value &&
+        this.$props.value &&
+        value.length > 0 &&
+        this.$props.value.indexOf(value) >= 0)
     )
   }
   get inputDisabled() {

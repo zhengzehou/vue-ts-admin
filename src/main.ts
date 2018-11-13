@@ -5,9 +5,11 @@ import store from './store'
 import message from '@/components/message'
 import messagebox from '@/components/messagebox'
 import loading from '@/components/loading'
+import BizMessageBox from '@/components/bizmessagebox'
 Vue.use(message)
 Vue.use(messagebox)
 Vue.use(loading)
+Vue.use(BizMessageBox)
 import { getCookieToken } from '@/service/login'
 // import VueHtml5Plus from 'vue-html5plus.js'
 // Vue.use(VueHtml5Plus)

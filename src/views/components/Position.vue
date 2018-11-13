@@ -4,43 +4,40 @@
       <form class="el-form">
         <div class="el-form-item col col-sm-12 col-xs-24">
           <label class="el-form-item__label " style="width: 80px; ">所属公司</label>
-          <Button type="text">{{dept.companyName}}=={{this.dept}}</Button>
+          <Button type="text">{{pos.companyName}}=={{this.pos}}</Button>
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门名称</label>
-          <Input placeholder="部门名称" label="用户名" v-model="dept.name" clearable class="col col-sm-10" />
+          <label class="el-form-item__label " style="width: 80px; ">职位名称</label>
+          <Input placeholder="职位名称" v-model="pos.name" clearable class="col col-sm-10" />
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门编号</label>
-          <Input placeholder="部门编号" label="用户名" v-model="dept.code" clearable class="col col-sm-10" />
+          <label class="el-form-item__label " style="width: 80px; ">职位编号</label>
+          <Input placeholder="职位编号" v-model="pos.code" clearable class="col col-sm-10" />
+        </div>
+        <div class="el-form-item col col-sm-24 col-xs-24">
+          <label class="el-form-item__label " style="width: 80px; ">职位级别</label>
+          <Input placeholder="职位级别" v-model="pos.posLevel" clearable class="col col-sm-10" />
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
           <label class="el-form-item__label " style="width: 80px; ">职能类型</label>
-          <Select v-model="dept.functionType" placeholder="请选择" :list="options" class="col col-sm-10"></Select>
+          <Select v-model="pos.functionType" placeholder="请选择" :list="dutyType" class="col col-sm-10"></Select>
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">上级部门</label>
-          <Select v-model="dept.parentId" placeholder="请选择" :list="options" class="col col-sm-10" filterable></Select>
+          <label class="el-form-item__label " style="width: 80px; ">上级岗位</label>
+          <Select v-model="pos.parentId" placeholder="请选择" :list="options" class="col col-sm-10" filterable></Select>
+          <Button @click="openDialog">Dialog</Button>
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门正职</label>
-          <Select v-model="dept.leader" placeholder="请选择" :list="options" class="col col-sm-10" filterable></Select>
+          <label class="el-form-item__label " style="width: 80px; ">岗位职责</label>
+          <Input v-model="pos.duty" label="岗位职责" type="textarea" placeholder="岗位职责" rows="3" class="col col-sm-10" />
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门副职</label>
-          <Select v-model="dept.deputy" placeholder="请选择" :list="options" class="col col-sm-10" filterable></Select>
+          <label class="el-form-item__label " style="width: 80px; ">入职要求</label>
+          <Input v-model="pos.requirement" label="部门职责" type="textarea" placeholder="入职要求" rows="3" class="col col-sm-10" />
         </div>
         <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门秘书</label>
-          <Select v-model="dept.secretary" placeholder="请选择" :list="options" class="col col-sm-10" filterable></Select>
-        </div>
-        <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">是否在编</label>
-          <Switchs v-model="dept.isOwn" active-color="#13ce66" inactive-color="#ff4949" active-value="1" inactive-value="0"></Switchs>
-        </div>
-        <div class="el-form-item col col-sm-24 col-xs-24">
-          <label class="el-form-item__label " style="width: 80px; ">部门职责</label>
-          <Input v-model="dept.duty" label="部门职责" type="textarea" placeholder="部门职责" rows="3" class="col col-sm-10" />
+          <label class="el-form-item__label " style="width: 80px; ">工作描述</label>
+          <Input v-model="pos.workDesc" label="部门职责" type="textarea" placeholder="工作描述" rows="3" class="col col-sm-10" />
         </div>
 
         <div class="el-form-item col col-sm-12 col-xs-24">
@@ -73,7 +70,7 @@ import TimeInput from '@/components/TimeInput.vue'
 import Button from '@/components/Button.vue'
 import Card from '@/components/Card.vue'
 import Component from 'vue-class-component'
-import { DepartmentVO } from '@/vo/DepartmentVO'
+import { PositionVO, dutyType } from '@/vo/PositionVO'
 @Component({
   components: {
     Input,
@@ -89,10 +86,17 @@ import { DepartmentVO } from '@/vo/DepartmentVO'
     Button
   }
 })
-export default class Department extends Vue {
-  dept = new DepartmentVO()
+export default class Position extends Vue {
+  pos = new PositionVO()
+  get dutyType() {
+    return dutyType
+  }
+  openDialog() {
+    let that: any = this
+    that.$bizDialog('test', 'nihao')
+  }
   created() {
-    this.dept.companyName = '上海邮乐忘记技术有限公司'
+    this.pos.companyName = '上海邮乐忘记技术有限公司'
   }
   options = [
     {

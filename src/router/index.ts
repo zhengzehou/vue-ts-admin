@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Dashboard from '@/views/Dashboard.vue'
 import Main from '@/containers/Main.vue'
 import Login from '@/containers/Login.vue'
-import Scan from '@/containers/Scan.vue'
 import FileUpload from '@/containers/FileUpload.vue'
 
 Vue.use(Router)
@@ -52,17 +51,17 @@ export const constantRouterMap = [
             component: getComponent('views/components/Department.vue')
           },
           {
-            path: 'jobs',
+            path: 'position',
             name: '岗位信息',
             icon: 'job',
-            component: getComponent('views/components/Users.vue')
+            component: getComponent('views/components/Position.vue')
           },
-          {
+          /* {
             path: 'group',
             name: '组别信息',
             icon: 'group',
             component: getComponent('views/components/Users.vue')
-          },
+          }, */
           {
             path: 'users',
             name: '用户信息',
